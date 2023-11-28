@@ -9,4 +9,4 @@ class Task(models.Model):
     deadline = models.TextField(verbose_name='Сделать до', null=True)
 
     def __str__(self):
-        return f'{self.id}. {self.task}'
+        return f'{self.id}. {self.name}'
