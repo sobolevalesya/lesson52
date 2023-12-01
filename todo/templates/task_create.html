@@ -14,6 +14,9 @@
     <label>Название:</label><br/>
     <input type="text" name="task"/><br/>
 
+    <label>Описание:</label><br/>
+    <textarea name="description"></textarea><br/>
+
     <label>Статус:</label><br/>
     <select name="status" id="">
         {% for status_choice in status_choices %}
@@ -27,6 +30,6 @@
     <input type="submit" value="Send"/>
 </form>
 
-<a href="/">На главную</a>
+<a href={% url 'index' %}>На главную</a>
 </body>
 </html>

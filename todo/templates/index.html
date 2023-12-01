@@ -11,13 +11,14 @@
 <body>
     <h1>Мои задачи</h1>
 
-    <a href="tasks/add/" class="card-link">Создать задачу</a>
+    <a href={% url 'task_create_view' %} class="card-link">Создать задачу</a>
     {% for task in tasks %}
         <div class="card my-3" style="width: 18rem;">
             <div class="card-body">
                 <h5 class="card-title">{{ task.name }}</h5>
                 <h6 class="card-subtitle mb-2 text-body-secondary">{{ task.status }}</h6>
                 <p class="card-text">{{ task.deadline }}</p>
+                <a href={% url 'task_view' pk=task.pk %} class="card-link">Подробнее...</a>
             </div>
         </div>
 
