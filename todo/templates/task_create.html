@@ -1,11 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Create</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
+{% block title %}Create task{% endblock %}
+{% block menu %}<a class="nav-link" aria-current="page" href={% url 'index' %}>На главную</a>{% endblock %}
+
+
+{% block content %}
 <h1>Создать задачу</h1>
 
 <form action="/tasks/add/" method="post">
@@ -30,6 +29,5 @@
     <input type="submit" value="Send"/>
 </form>
 
-<a href={% url 'index' %}>На главную</a>
-</body>
-</html>
+
+{% endblock %}
