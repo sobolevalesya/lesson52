@@ -1,7 +1,12 @@
 {% extends 'base.html' %}
 
 {% block title %}{{ task.name }}{% endblock %}
-{% block menu %}<a class="nav-link" aria-current="page" href={% url 'index' %}>На главную</a>{% endblock %}
+{% block menu %}
+    <a class="nav-link" aria-current="page" href={% url 'index' %}>На главную</a>
+    <a class="nav-link" aria-current="page" href={% url 'task_update_view' pk=task.pk %}>Редактировать</a>
+    <a class="nav-link" aria-current="page" href={% url 'task_delete_view' pk=task.pk %}>Удалить</a>
+
+{% endblock %}
 
 {% block content %}
 
