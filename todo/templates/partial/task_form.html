@@ -1,19 +1,43 @@
 {% csrf_token %}
 
 <label>Название:</label><br/>
-<input type="text" name="task" value="{{ task.name }}"/><br/>
+<input type="text" class="form-control {% if errors.name %} is-invalid{% endif %}" name="task" value="{{ task.name }}"/>
+{%  if errors.name %}
+<div class="invalid-feedback">
+    {{ errors.name }}
+</div>
+{% endif %}
+<br/>
 
 <label>Описание:</label><br/>
-<textarea name="description">{{ task.description }}</textarea><br/>
+<textarea class="form-control {% if errors.description %} is-invalid{% endif %}" name="description">{{ task.description }}</textarea>
+{%  if errors.description %}
+<div class="invalid-feedback">
+    {{ errors.description }}
+</div>
+{% endif %}
+<br/>
 
 <label>Статус:</label><br/>
-<select name="status" id="">
+<select class="form-control {% if errors.status %} is-invalid{% endif %}" name="status" id="">
     {% for status_choice in status_choices %}
         <option value="{{ status_choice.0 }}">{{ status_choice.1 }}</option>
     {% endfor %}
 </select><br/>
+{%  if errors.status %}
+<div class="invalid-feedback">
+    {{ errors.status }}
+</div>
+{% endif %}
+
 
 <label>Сделать до:</label><br/>
-<input type="text" name="deadline" value="{{ task.deadline }}"/><br/>
+<input class="form-control {% if errors.deadline %} is-invalid{% endif %}" type="text" name="deadline" value="{{ task.deadline }}"/>
+<br/>
+{%  if errors.deadline %}
+<div class="invalid-feedback">
+    {{ errors.deadline }}
+</div>
+{% endif %}
 <br/>
 <input type="submit" value="{{ value_submit }}"/>
