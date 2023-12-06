@@ -9,32 +9,7 @@
 
 <form action="/tasks/add/" method="post">
     {% csrf_token %}
-
-    <label>Название:</label><br/>
-    <input type="text" name="task"/><br/>
-
-    <label>Описание:</label><br/>
-    <textarea name="description"></textarea><br/>
-
-    <label>Статус:</label><br/>
-    <select name="status" id="">
-        {% for status_choice in status_choices %}
-            <option value="{{ status_choice.0 }}">{{ status_choice.1 }}</option>
-        {% endfor %}
-    </select><br/>
-
-    <label>Сделать до:</label><br/>
-    <input type="text" name="deadline"/><br/>
-    <br/>
-{#    <select name="type_id" id="">#}
-{#        {% for type_task in types_task %}#}
-{#            <option value="{{ type_task.id }}">{{ type_task.name }}</option>#}
-{#        {% endfor %}#}
-{#    </select>#}
-{#    <br/>#}
-    <input type="submit" value="Send"/>
-
-
+    {% include 'partial/task_form.html' with value_submit='Create' %}
 </form>
 
 
