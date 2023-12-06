@@ -1,6 +1,8 @@
 from django.shortcuts import render, reverse, redirect, get_object_or_404
 from todo.models import Task, status_choices, TypeTask
 from todo.validate_char_field import task_validate
+from todo.forms import TaskForm
+
 
 def index_view(request):
     tasks = Task.objects.all()
@@ -8,51 +10,54 @@ def index_view(request):
 
 
 def task_view(request, *args, pk, **kwargs):
-    # task_id = request.GET.get('id')
-    # task = Task.objects.get(id=task_id)
     task = get_object_or_404(Task, pk=pk)
     return render(request, 'task_view.html', {'task': task})
 
 
 def task_create_view(request):
     if request.method == "GET":
-        types_task = TypeTask.objects.all()
-        return render(request, 'task_create.html', {'status_choices': status_choices})
+        form = TaskForm()
+        return render(request, 'task_create.html', {'status_choices': status_choices, 'form': form})
     elif request.method == "POST":
-        name = request.POST.get('task')
-        description = request.POST.get('description')
-        status = request.POST.get('status')
-        deadline = request.POST.get('deadline')
-        task = Task(name=name, description=description, status=status, deadline=deadline)
-        errors = task_validate(name, description, status, deadline)
+        form = TaskForm(data=request.POST)
 
-        if errors:
-            return render(request, 'task_create.html', {'status_choices': status_choices, 'errors': errors, 'task': task})
-        else:
-            task.save()
+        if form.is_valid():
+            task = Task.objects.create(
+                name=form.cleaned_data.get('name'),
+                description=form.cleaned_data.get('description'),
+                status=form.cleaned_data.get('status'),
+                deadline=form.cleaned_data.get('deadline')
+
+            )
             return redirect('task_view', pk=task.pk)
+        else:
+            return render(request, 'task_create.html', {'status_choices': status_choices, 'form': form})
+
 
 
 def task_update_view(request, pk):
     task = get_object_or_404(Task, pk=pk)
     if request.method == "GET":
-        types_task = TypeTask.objects.all()
-        return render(request, 'task_update.html', {'status_choices': status_choices, 'types_task': types_task, 'task': task})
+        form = TaskForm(initial={
+            'name': task.name,
+            'description': task.description,
+            'status': task.status,
+            'deadline': task.deadline
+        })
+        return render(request, 'task_update.html', {'status_choices': status_choices, 'form': form})
     elif request.method == "POST":
 
-        task.name = request.POST.get('task')
-        task.description = request.POST.get('description')
-        task.status = request.POST.get('status')
-        task.deadline = request.POST.get('deadline')
-        task.type_id = request.POST.get('type_id')
-        errors = task_validate(task.name, task.description, task.status, task.deadline)
-
-        if errors:
-            return render(request, 'task_update.html',
-                          {'status_choices': status_choices, 'errors': errors, 'task': task})
-        else:
+        form = TaskForm(data=request.POST)
+        if form.is_valid():
+            task.name = form.cleaned_data.get('name')
+            task.description = form.cleaned_data.get('description')
+            task.status = form.cleaned_data.get('status')
+            task.deadline = form.cleaned_data.get('deadline')
             task.save()
             return redirect('task_view', pk=task.pk)
+        else:
+            return render(request, 'task_update.html',
+                      {'status_choices': status_choices, 'form': form})
 
 
 def task_delete_view(request, pk):
