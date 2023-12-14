@@ -1,5 +1,5 @@
 from django.shortcuts import render, reverse, redirect, get_object_or_404
-from todo.models import Task, status_choices, TypeTask
+from todo.models import Task, status_choices, TaskType, Status, Type
 from todo.validate_char_field import task_validate
 from todo.forms import TaskForm
 
@@ -25,10 +25,10 @@ def task_create_view(request):
             task = Task.objects.create(
                 name=form.cleaned_data.get('name'),
                 description=form.cleaned_data.get('description'),
-                status=form.cleaned_data.get('status'),
-                deadline=form.cleaned_data.get('deadline')
+                status=form.cleaned_data.get('status')
 
             )
+            task.type.add(form.cleaned_data.get('type'))
             return redirect('task_view', pk=task.pk)
         else:
             return render(request, 'task_create.html', {'status_choices': status_choices, 'form': form})
@@ -42,7 +42,7 @@ def task_update_view(request, pk):
             'name': task.name,
             'description': task.description,
             'status': task.status,
-            'deadline': task.deadline
+            'type': task.type.first()
         })
         return render(request, 'task_update.html', {'status_choices': status_choices, 'form': form})
     elif request.method == "POST":
@@ -52,7 +52,6 @@ def task_update_view(request, pk):
             task.name = form.cleaned_data.get('name')
             task.description = form.cleaned_data.get('description')
             task.status = form.cleaned_data.get('status')
-            task.deadline = form.cleaned_data.get('deadline')
             task.save()
             return redirect('task_view', pk=task.pk)
         else:
@@ -63,7 +62,7 @@ def task_update_view(request, pk):
 def task_delete_view(request, pk):
     task = get_object_or_404(Task, pk=pk)
     if request.method == "GET":
-        types_task = TypeTask.objects.all()
+        types_task = TaskType.objects.all()
         return render(request, 'task_delete.html', {'status_choices': status_choices, 'types_task': types_task, 'task': task})
     elif request.method == "POST":
         task.delete()
