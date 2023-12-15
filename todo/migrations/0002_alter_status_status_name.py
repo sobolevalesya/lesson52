@@ -4,15 +4,22 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('todo', '0001_initial'),
+        ("todo", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='status',
-            name='status_name',
-            field=models.CharField(choices=[('new', 'Новая'), ('in_progress', 'В процессе'), ('done', 'Сделано')], max_length=31, verbose_name='Статус'),
+            model_name="status",
+            name="status_name",
+            field=models.CharField(
+                choices=[
+                    ("new", "Новая"),
+                    ("in_progress", "В процессе"),
+                    ("done", "Сделано"),
+                ],
+                max_length=31,
+                verbose_name="Статус",
+            ),
         ),
     ]
