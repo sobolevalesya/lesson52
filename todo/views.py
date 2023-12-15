@@ -1,12 +1,13 @@
 from django.shortcuts import render, reverse, redirect, get_object_or_404
 from todo.models import Task, status_choices, TaskType, Status, Type
-from todo.validate_char_field import task_validate
 from todo.forms import TaskForm
+from django.views.generic import View, TemplateView, RedirectView
 
 
-def index_view(request):
-    tasks = Task.objects.all()
-    return render(request, 'index.html', {'tasks': tasks})
+class IndexView(View):
+    def get(self, request, *args, **kwargs):
+        tasks = Task.objects.all()
+        return render(request, 'index.html', {'tasks': tasks})
 
 
 def task_view(request, *args, pk, **kwargs):
