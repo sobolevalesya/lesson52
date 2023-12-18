@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import MinLengthValidator
 
 status_choices = [("new", "Новая"), ("in_progress", "В процессе"), ("done", "Сделано")]
 type_choices = [("task", "Задача"), ("bug", "Ошибка"), ("enhancement", "Улучшение")]
@@ -22,7 +23,7 @@ class AbstractModel(models.Model):
 
 class Task(AbstractModel):
     name = models.CharField(
-        max_length=50, null=False, blank=False, verbose_name="Задача"
+        max_length=50, null=False, blank=False, validators=[MinLengthValidator(4)], verbose_name="Задача"
     )
     description = models.TextField(
         max_length=3000, null=True, blank=False, verbose_name="Описание"

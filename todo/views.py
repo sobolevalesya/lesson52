@@ -1,7 +1,8 @@
 from django.shortcuts import render, reverse, redirect, get_object_or_404
+from django.urls import reverse, reverse_lazy
 from todo.models import Task, status_choices, TaskType, Status, Type, type_choices
 from todo.forms import TaskForm
-from django.views.generic import View, TemplateView
+from django.views.generic import View, TemplateView, FormView
 
 
 class IndexView(View):
@@ -24,68 +25,55 @@ def task_view(request, *args, pk, **kwargs):
     return render(request, "task_view.html", {"task": task})
 
 
-class TaskCreateView(View):
-    def get(self, request, *args, **kwargs):
-        form = TaskForm()
-        return render(
-            request,
-            "task_create.html",
-            {"status_choices": status_choices, "form": form},
+class TaskCreateView(FormView):
+    template_name = 'task_create.html'
+    form_class = TaskForm
+    # success_url = reverse_lazy('index')
+
+    # def get_success_url(self):
+    #     return reverse('task_view', kwargs={'pk': self.task.pk})
+
+    def form_valid(self, form):
+        # form = TaskForm(data=self.request.POST)
+        types = form.cleaned_data.pop('type')
+        self.task = Task.objects.create(
+            name=form.cleaned_data.get("name"),
+            description=form.cleaned_data.get("description"),
+            status=form.cleaned_data.get("status"),
         )
-
-    def post(self, request, *args, **kwargs):
-        form = TaskForm(data=request.POST)
-
-        if form.is_valid():
-            task = Task.objects.create(
-                name=form.cleaned_data.get("name"),
-                description=form.cleaned_data.get("description"),
-                status=form.cleaned_data.get("status"),
-            )
-            task.type.add(form.cleaned_data.get("type"))
-            return redirect("task_view", pk=task.pk)
-        else:
-            return render(
-                request,
-                "task_create.html",
-                {"status_choices": status_choices, "form": form},
-            )
+        print(types)
+        self.task.type.set(types)
+        return redirect('task_view', pk=self.task.pk)
 
 
-class TaskUpdateView(TemplateView):
-    template_name = "task_update.html"
+class TaskUpdateView(FormView):
+    template_name = 'task_update.html'
+    form_class = TaskForm
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        task = get_object_or_404(Task, pk=kwargs.get("pk"))
-        form = TaskForm(
-            initial={
-                "name": task.name,
-                "description": task.description,
-                "status": task.status,
-                "type": task.type.all(),
-            }
-        )
-        context["form"] = form
-        return context
+    def dispatch(self, request, *args, **kwargs):
+        self.task = self.get_object()
+        return super().dispatch(request, *args, **kwargs)
 
-    def post(self, request, *args, **kwargs):
-        task = get_object_or_404(Task, pk=kwargs.get("pk"))
-        form = TaskForm(data=request.POST)
-        if form.is_valid():
-            types = form.cleaned_data.pop("type")
-            task.name = form.cleaned_data.get("name")
-            task.description = form.cleaned_data.get("description")
-            task.status = form.cleaned_data.get("status")
-            task.type.add(types)
-            task.save()
-            return redirect("task_view", pk=task.pk)
-        else:
-            return render(
-                request,
-                "task_update.html",
-                {"status_choices": status_choices, "form": form},
-            )
+    def get_object(self):
+        return get_object_or_404(Task, pk=self.kwargs.get('pk'))
+
+    def get_initial(self):
+        initial = {
+            "name": self.task.name,
+            "description": self.task.description,
+            "status": self.task.status,
+            "type": self.task.type.all(),
+        }
+        return initial
+
+    def form_valid(self, form):
+        types = form.cleaned_data.pop("type")
+        self.task.name = form.cleaned_data.get("name")
+        self.task.description = form.cleaned_data.get("description")
+        self.task.status = form.cleaned_data.get("status")
+        self.task.type.add(types)
+        self.task.save()
+        return redirect("task_view", pk=self.task.pk)
 
 
 class TaskDeleteView(View):
