@@ -28,21 +28,9 @@ def task_view(request, *args, pk, **kwargs):
 class TaskCreateView(FormView):
     template_name = 'task_create.html'
     form_class = TaskForm
-    # success_url = reverse_lazy('index')
-
-    # def get_success_url(self):
-    #     return reverse('task_view', kwargs={'pk': self.task.pk})
 
     def form_valid(self, form):
-        # form = TaskForm(data=self.request.POST)
-        types = form.cleaned_data.pop('type')
-        self.task = Task.objects.create(
-            name=form.cleaned_data.get("name"),
-            description=form.cleaned_data.get("description"),
-            status=form.cleaned_data.get("status"),
-        )
-        print(types)
-        self.task.type.set(types)
+        self.task = form.save()
         return redirect('task_view', pk=self.task.pk)
 
 
@@ -57,22 +45,13 @@ class TaskUpdateView(FormView):
     def get_object(self):
         return get_object_or_404(Task, pk=self.kwargs.get('pk'))
 
-    def get_initial(self):
-        initial = {
-            "name": self.task.name,
-            "description": self.task.description,
-            "status": self.task.status,
-            "type": self.task.type.all(),
-        }
-        return initial
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['instance'] = self.task
+        return kwargs
 
     def form_valid(self, form):
-        types = form.cleaned_data.pop("type")
-        self.task.name = form.cleaned_data.get("name")
-        self.task.description = form.cleaned_data.get("description")
-        self.task.status = form.cleaned_data.get("status")
-        self.task.type.add(types)
-        self.task.save()
+        form.save()
         return redirect("task_view", pk=self.task.pk)
 
 

@@ -1,5 +1,5 @@
 from django.db import models
-from django.core.validators import MinLengthValidator
+from django.core.validators import MinLengthValidator, MaxLengthValidator
 
 status_choices = [("new", "Новая"), ("in_progress", "В процессе"), ("done", "Сделано")]
 type_choices = [("task", "Задача"), ("bug", "Ошибка"), ("enhancement", "Улучшение")]
@@ -26,7 +26,7 @@ class Task(AbstractModel):
         max_length=50, null=False, blank=False, validators=[MinLengthValidator(4)], verbose_name="Задача"
     )
     description = models.TextField(
-        max_length=3000, null=True, blank=False, verbose_name="Описание"
+        max_length=3000, null=True, blank=False, validators=[MaxLengthValidator(300)], verbose_name="Описание"
     )
     status = models.ForeignKey(
         "todo.Status",
