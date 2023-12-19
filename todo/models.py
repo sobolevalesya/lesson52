@@ -45,7 +45,7 @@ class Task(AbstractModel):
     )
 
     def __str__(self):
-        return f"{self.id}. {self.name}"
+        return f"{self.id}. {self.name}. {self.status.status_name}"
 
 
 class Status(AbstractModel):

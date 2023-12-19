@@ -1,0 +1,10 @@
+Запрос 1
+Task.objects.filter(status__status_name='done', created_at__gte=timezone.now() -timedelta(days=30))
+
+Запрос 2
+Task.objects.filter(type__type_name__in=('task', 'bug'), status__status_name__in=('new', 'done')).distinct()
+
+Запрос 3
+Task.objects.filter(Q(name__icontains='bug') | Q(type__type_name__icontains='bug')).exclude(status__status_name__contains='done')
+
+PS. Закомментированный код в файлах оставила, чтобы в дальнейшем разобраться в деталях работы
