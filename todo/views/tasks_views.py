@@ -7,11 +7,11 @@ from django.views.generic import View, TemplateView
 class IndexView(View):
     def get(self, request, *args, **kwargs):
         tasks = Task.objects.all()
-        return render(request, "index.html", {"tasks": tasks})
+        return render(request, "projects/index.html", {"tasks": tasks})
 
 
 class TaskView(TemplateView):
-    template_name = "task_view.html"
+    template_name = "tasks/task_view.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -21,7 +21,7 @@ class TaskView(TemplateView):
 
 def task_view(request, *args, pk, **kwargs):
     task = get_object_or_404(Task, pk=pk)
-    return render(request, "task_view.html", {"task": task})
+    return render(request, "tasks/task_view.html", {"task": task})
 
 
 class TaskCreateView(View):
@@ -29,7 +29,7 @@ class TaskCreateView(View):
         form = TaskForm()
         return render(
             request,
-            "task_create.html",
+            "tasks/task_create.html",
             {"status_choices": status_choices, "form": form},
         )
 
@@ -47,13 +47,13 @@ class TaskCreateView(View):
         else:
             return render(
                 request,
-                "task_create.html",
+                "tasks/task_create.html",
                 {"status_choices": status_choices, "form": form},
             )
 
 
 class TaskUpdateView(TemplateView):
-    template_name = "task_update.html"
+    template_name = "tasks/task_update.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -83,7 +83,7 @@ class TaskUpdateView(TemplateView):
         else:
             return render(
                 request,
-                "task_update.html",
+                "tasks/task_update.html",
                 {"status_choices": status_choices, "form": form},
             )
 
@@ -93,7 +93,7 @@ class TaskDeleteView(View):
         task = get_object_or_404(Task, pk=kwargs.get("pk"))
         return render(
             request,
-            "task_delete.html",
+            "tasks/task_delete.html",
             {
                 "status_choices": status_choices,
                 "type_choices": type_choices,

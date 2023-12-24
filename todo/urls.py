@@ -1,6 +1,6 @@
 from django.urls import path
 from django.views.generic import RedirectView
-from todo.views import (
+from todo.views.tasks_views import (
     IndexView,
     TaskCreateView,
     TaskView,
