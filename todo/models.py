@@ -42,6 +42,13 @@ class Task(AbstractModel):
         related_name="tasks",
         blank=True,
     )
+    project = models.ForeignKey(
+        "todo.Project",
+        on_delete=models.RESTRICT,
+        verbose_name="Проект",
+        related_name="tasks",
+        blank=True,
+    )
 
     def __str__(self):
         return f"{self.id}. {self.name}"
@@ -81,3 +88,17 @@ class TaskType(models.Model):
 
     def __str__(self):
         return "{} | {}".format(self.task, self.type)
+
+
+class Project(models.Model):
+    project_name = models.CharField(
+        max_length=50, null=False, blank=False, verbose_name="Проект"
+    )
+    project_description = models.TextField(
+        max_length=3000, null=True, blank=False, verbose_name="Описание проекта"
+    )
+    start_project = models.DateField(null=False, blank=False, verbose_name="Начало проекта")
+    end_project = models.DateField(null=True, blank=True, verbose_name="Завершение проекта")
+
+    def __str__(self):
+        return f"{self.id}. {self.project_name}"

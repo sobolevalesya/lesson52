@@ -1,5 +1,5 @@
 from django.contrib import admin
-from todo.models import Task, Status, TaskType, Type
+from todo.models import Task, Status, TaskType, Type, Project
 
 
 @admin.register(Task)
@@ -20,3 +20,7 @@ class TypeAdmin(admin.ModelAdmin):
 @admin.register(TaskType)
 class TypeTaskAdmin(admin.ModelAdmin):
     list_display = ["id", "task", "type"]
+
+@admin.register(Project)
+class ProjectAdmin(admin.ModelAdmin):
+    list_display = ["id", "project_name"]
