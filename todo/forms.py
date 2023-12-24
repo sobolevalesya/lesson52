@@ -1,18 +1,8 @@
 from django import forms
-from django.forms import widgets
-from todo.models import Type, Status, Task
-from django.core.validators import BaseValidator
-from django.utils.deconstruct import deconstructible
-from django.core.validators import MinLengthValidator, MaxLengthValidator
+from todo.models import Task
 
 
 class TaskForm(forms.ModelForm):
-    # name = forms.CharField(max_length=50, required=True, validators=[MinLengthValidator(4, message='Название слишком короткое')], label="Задача")
-    # description = forms.CharField(
-    #     max_length=3000, required=True, label="Описание", widget=widgets.Textarea
-    # )
-    # type = forms.ModelChoiceField(queryset=Type.objects.all(), label="Тип")
-    # status = forms.ModelChoiceField(queryset=Status.objects.all(), label="Статус")
     class Meta:
         model = Task
         fields = ('name', 'description', 'status', 'type')
@@ -35,3 +25,7 @@ class TaskForm(forms.ModelForm):
         if name == description:
             raise forms.ValidationError('Название и описание задачи не могут быть одинаковыми')
         return cleaned_data
+
+
+class SimpleSearchForm(forms.Form):
+    search = forms.CharField(required=False, label='Найти')

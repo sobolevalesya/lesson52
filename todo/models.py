@@ -13,14 +13,6 @@ class AbstractModel(models.Model):
         abstract = True
 
 
-# class TypeTask(AbstractModel):
-#     name = models.TextField(max_length=3000, verbose_name="Задача", unique=True)
-#     descript = models.TextField(max_length=400, null=True, blank=True, verbose_name='Описание')
-#
-#     def __str__(self):
-#         return f'{self.id}. {self.name}'
-
-
 class Task(AbstractModel):
     name = models.CharField(
         max_length=50, null=False, blank=False, validators=[MinLengthValidator(4)], verbose_name="Задача"
