@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 status_choices = [("new", "Новая"), ("in_progress", "В процессе"), ("done", "Сделано")]
 type_choices = [("task", "Задача"), ("bug", "Ошибка"), ("enhancement", "Улучшение")]
@@ -102,3 +103,6 @@ class Project(models.Model):
 
     def __str__(self):
         return f"{self.id}. {self.project_name}"
+
+    def get_absolute_url(self):
+        return reverse('project_view', kwargs={'pk': self.pk})

@@ -1,6 +1,6 @@
 from django.shortcuts import reverse, render, redirect, get_object_or_404
 from todo.models import Project
-from django.views.generic import View, ListView, DetailView, TemplateView, CreateView
+from django.views.generic import View, ListView, DetailView, CreateView, UpdateView, DeleteView
 from todo.forms import TaskForm, SimpleSearchForm, ProjectForm
 from django.utils.http import urlencode
 from django.db.models import Q
@@ -53,57 +53,16 @@ def project_view(request, *args, pk, **kwargs):
     return render(request, "projects/project_view.html", {"project": project})
 
 
-class ProjectUpdateView(TemplateView):
+class ProjectUpdateView(UpdateView):
     template_name = "projects/project_update.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        project = get_object_or_404(Project, pk=kwargs.get("pk"))
-        form = ProjectForm(
-            initial={
-                "project_name": project.project_name,
-                "project_description": project.project_description,
-                "start_project": project.start_project,
-                "end_project": project.end_project,
-            }
-        )
-        context["form"] = form
-        return context
-
-    def post(self, request, *args, **kwargs):
-        project = get_object_or_404(Project, pk=kwargs.get("pk"))
-        form = ProjectForm(data=request.POST)
-        if form.is_valid():
-            project.project_name = form.cleaned_data.get("project_name")
-            project.project_description = form.cleaned_data.get("project_description")
-            project.start_project = form.cleaned_data.get("start_project")
-            project.end_project = form.cleaned_data.get("end_project")
-            # project.type.add(types)
-            project.save()
-            return redirect("project_view", pk=project.pk)
-        else:
-            return render(
-                request,
-                "projects/project_update.html",
-                # {"status_choices": status_choices, "form": form},
-            )
+    model = Project
+    form_class = ProjectForm
 
 
-class ProjectDeleteView(View):
-    def get(self, request, *args, **kwargs):
-        project = get_object_or_404(Project, pk=kwargs.get("pk"))
-        return render(
-            request,
-            "projects/project_delete.html",
-            {
-                "project": project,
-            },
-        )
-
-    def post(self, request, *args, **kwargs):
-        project = get_object_or_404(Project, pk=kwargs.get("pk"))
-        project.delete()
-        return redirect("index")
+class ProjectDeleteView(DeleteView):
+    model = Project
+    success_url = '/'
+    template_name = "projects/project_delete.html"
 
 
 class ProjectCreateView(CreateView):
