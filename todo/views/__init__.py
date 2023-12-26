@@ -1,1 +1,2 @@
-from .tasks_views import TaskView, IndexView, TaskCreateView, TaskDeleteView, TaskUpdateView
+from .tasks_views import TaskView, TaskCreateView, TaskDeleteView, TaskUpdateView
+from .projects_views import IndexView

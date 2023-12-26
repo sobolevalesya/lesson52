@@ -97,7 +97,7 @@ class Project(models.Model):
     project_description = models.TextField(
         max_length=3000, null=True, blank=False, verbose_name="Описание проекта"
     )
-    start_project = models.DateField(null=False, blank=False, verbose_name="Начало проекта")
+    start_project = models.DateField(null=True, blank=True, verbose_name="Начало проекта")
     end_project = models.DateField(null=True, blank=True, verbose_name="Завершение проекта")
 
     def __str__(self):

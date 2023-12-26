@@ -1,13 +1,13 @@
 from django.shortcuts import render, reverse, redirect, get_object_or_404
-from todo.models import Task, status_choices, TaskType, Status, Type, type_choices
+from todo.models import Task, status_choices, TaskType, Status, Type, type_choices, Project
 from todo.forms import TaskForm
-from django.views.generic import View, TemplateView
+from django.views.generic import View, TemplateView, CreateView
 
 
-class IndexView(View):
-    def get(self, request, *args, **kwargs):
-        tasks = Task.objects.all()
-        return render(request, "projects/index.html", {"tasks": tasks})
+# class IndexView(View):
+#     def get(self, request, *args, **kwargs):
+#         tasks = Task.objects.all()
+#         return render(request, "projects/index.html", {"tasks": tasks})
 
 
 class TaskView(TemplateView):
@@ -24,32 +24,18 @@ def task_view(request, *args, pk, **kwargs):
     return render(request, "tasks/task_view.html", {"task": task})
 
 
-class TaskCreateView(View):
-    def get(self, request, *args, **kwargs):
-        form = TaskForm()
-        return render(
-            request,
-            "tasks/task_create.html",
-            {"status_choices": status_choices, "form": form},
-        )
+class TaskCreateView(CreateView):
+    template_name = 'tasks/task_create.html'
+    model = Task
+    fields = ['name', 'description', 'status', 'type', 'project']
 
-    def post(self, request, *args, **kwargs):
-        form = TaskForm(data=request.POST)
+    def get_success_url(self):
+        return reverse('project_view', kwargs={'pk': self.object.project.pk})
 
-        if form.is_valid():
-            task = Task.objects.create(
-                name=form.cleaned_data.get("name"),
-                description=form.cleaned_data.get("description"),
-                status=form.cleaned_data.get("status"),
-            )
-            task.type.add(form.cleaned_data.get("type"))
-            return redirect("task_view", pk=task.pk)
-        else:
-            return render(
-                request,
-                "tasks/task_create.html",
-                {"status_choices": status_choices, "form": form},
-            )
+    def form_valid(self, form):
+        project = get_object_or_404(Project, pk=self.kwargs.get('pk'))
+        form.instance.project = project
+        return super().form_valid(form)
 
 
 class TaskUpdateView(TemplateView):
