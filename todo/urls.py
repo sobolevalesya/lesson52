@@ -8,10 +8,11 @@ from todo.views.tasks_views import (
     TaskDeleteView,
 )
 
+app_name = "todo"
 
 urlpatterns = [
     path("", IndexView.as_view(), name="index"),
-    path("tasks/", RedirectView.as_view(pattern_name="index")),
+    path("tasks/", RedirectView.as_view(pattern_name="todo:index")),
     path("project/<int:pk>/tasks/add/", TaskCreateView.as_view(), name="task_add"),
     path("task/<int:pk>", TaskView.as_view(), name="task_view"),
     path("task/<int:pk>/update/", TaskUpdateView.as_view(), name="task_update_view"),

@@ -105,4 +105,4 @@ class Project(models.Model):
         return f"{self.id}. {self.project_name}"
 
     def get_absolute_url(self):
-        return reverse('project_view', kwargs={'pk': self.pk})
+        return reverse('todo:project_view', kwargs={'pk': self.pk})
