@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import reverse, render, redirect, get_object_or_404
 from todo.models import Project
 from django.views.generic import View, ListView, DetailView, CreateView, UpdateView, DeleteView
@@ -23,6 +24,7 @@ class IndexView(ListView):
         return None
 
     def dispatch(self, request, *args, **kwargs):
+        print(request.user)
         self.search_form = self.get_search_form()
         self.search_value = self.get_search_value()
         return super().dispatch(request, *args, **kwargs)
@@ -53,22 +55,23 @@ def project_view(request, *args, pk, **kwargs):
     return render(request, "projects/project_view.html", {"project": project})
 
 
-class ProjectUpdateView(UpdateView):
+class ProjectUpdateView(LoginRequiredMixin, UpdateView):
     template_name = "projects/project_update.html"
     model = Project
     form_class = ProjectForm
 
 
-class ProjectDeleteView(DeleteView):
+class ProjectDeleteView(LoginRequiredMixin, DeleteView):
     model = Project
     success_url = '/'
     template_name = "projects/project_delete.html"
 
 
-class ProjectCreateView(CreateView):
+class ProjectCreateView(LoginRequiredMixin, CreateView):
     template_name = 'projects/project_create.html'
     model = Project
     fields = ['project_name', 'project_description', 'start_project', 'end_project']
 
     def get_success_url(self):
-        return reverse('project_view', kwargs={'pk': self.object.pk})
+        return reverse('todo:project_view', kwargs={'pk': self.object.pk})
+

@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}Delete task{% endblock %}
-{% block menu %}<a class="nav-link" aria-current="page" href={% url 'index' %}>На главную</a>{% endblock %}
+{% block menu %}<a class="nav-link" aria-current="page" href={% url 'todo:index' %}>На главную</a>{% endblock %}
 
 
 {% block content %}
@@ -13,7 +13,7 @@
     {% csrf_token %}
     <input type="submit" value="ДА"/>
 </form>
-    <a href="{% url 'task_view' pk=task.pk %}">Нет</a>
+    <a href="{% url 'todo:task_view' pk=task.pk %}">Нет</a>
 
 
 {% endblock %}

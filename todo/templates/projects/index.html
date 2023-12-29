@@ -1,11 +1,14 @@
 {% extends 'base.html' %}
 
-{% block menu %}<a class="nav-link" aria-current="page" href="{% url 'project_add' %}">Создать проект</a>{% endblock %}
+{% block menu %}
+    {% if request.user.is_authenticated %}
+        <a class="nav-link" aria-current="page" href="{% url 'todo:project_add' %}">Создать проект</a>
+    {% endif %}
+{% endblock %}
 
 <body>
 {% block content %}
     <h1>Мои проекты</h1>
-
     <div>
     {%  include 'partial/simple_search.html' %}
     </div>
@@ -27,9 +30,10 @@
 {#                    {% endfor %}#}
 {#                    </p>#}
                 <a href={{ project.get_absolute_url }} class="card-link">Подробнее...</a>
-                <a href={% url 'project_update_view' pk=project.pk %} class="card-link">Редактировать</a>
-                <a href={% url 'project_delete_view' pk=project.pk %} class="card-link">Удалить</a>
-
+                {% if request.user.is_authenticated %}
+                    <a href={% url 'todo:project_update_view' pk=project.pk %} class="card-link">Редактировать</a>
+                    <a href={% url 'todo:project_delete_view' pk=project.pk %} class="card-link">Удалить</a>
+                {% endif %}
 
             </div>
         </div>
