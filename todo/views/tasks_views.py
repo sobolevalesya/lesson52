@@ -1,4 +1,4 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.shortcuts import render, reverse, redirect, get_object_or_404
 from todo.models import Task, status_choices, TaskType, Status, Type, type_choices, Project
 from todo.forms import TaskForm
@@ -28,18 +28,26 @@ class TaskCreateView(LoginRequiredMixin, CreateView):
         return redirect('todo:project_view', pk=project.pk)
 
 
-class TaskUpdateView(LoginRequiredMixin, UpdateView):
+class TaskUpdateView(PermissionRequiredMixin, UpdateView):
     template_name = "tasks/task_update.html"
     model = Task
     form_class = TaskForm
+    permission_required = 'todo.change_task'
+
+    def has_permission(self):
+        return super().has_permission() or self.request.user == self.get_object().users_task
 
     def get_success_url(self):
         return reverse('todo:project_view', kwargs={'pk': self.object.project_id})
 
 
-class TaskDeleteView(LoginRequiredMixin, DeleteView):
+class TaskDeleteView(PermissionRequiredMixin, DeleteView):
     model = Task
     template_name = "tasks/task_delete.html"
+    permission_required = 'todo.delete_task'
+
+    def has_permission(self):
+        return super().has_permission() or self.request.user == self.get_object().users_task
 
     def get_success_url(self):
         return reverse('todo:project_view', kwargs={'pk': self.object.project_id})

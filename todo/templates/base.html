@@ -20,11 +20,13 @@
       <div class="navbar-nav">
           {% block menu %}{% endblock %}
       {% if not request.user.is_authenticated %}
-        <a class="nav-link" aria-current="page" href="#">Регистрация</a>
-        <a class="nav-link" aria-current="page" href="{% url 'accounts:login' %}">Вход</a>
+        <a class="nav-link" aria-current="page" href="{% url 'accounts:user_create' %}?next={{ request.get_full_path }}">Регистрация</a>
+        <a class="nav-link" aria-current="page"
+           href="{% url 'accounts:login' %}?next={{ request.get_full_path }}">Вход</a>
       {% else %}
           <span class="nav-link">{{ request.user }}</span>
-        <a class="nav-link" aria-current="page" href="{% url 'accounts:logout' %}">Выход</a>
+        <a class="nav-link" aria-current="page"
+           href="{% url 'accounts:logout' %}?next={{ request.get_full_path }}">Выход</a>
       {% endif %}
       </div>
     </div>

@@ -1,4 +1,4 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.shortcuts import reverse, render, redirect, get_object_or_404
 from todo.models import Project
 from django.views.generic import View, ListView, DetailView, CreateView, UpdateView, DeleteView
@@ -55,22 +55,36 @@ def project_view(request, *args, pk, **kwargs):
     return render(request, "projects/project_view.html", {"project": project})
 
 
-class ProjectUpdateView(LoginRequiredMixin, UpdateView):
+class ProjectUpdateView(PermissionRequiredMixin, UpdateView):
     template_name = "projects/project_update.html"
     model = Project
     form_class = ProjectForm
+    permission_required = 'todo.change_project'
+
+    def has_permission(self):
+        return super().has_permission() or self.request.user == self.get_object().users
 
 
-class ProjectDeleteView(LoginRequiredMixin, DeleteView):
+class ProjectDeleteView(PermissionRequiredMixin, DeleteView):
     model = Project
     success_url = '/'
     template_name = "projects/project_delete.html"
+
+    def has_permission(self):
+        return self.request.user.has_perm('todo.delete_project') or self.request.user == self.get_object().users
 
 
 class ProjectCreateView(LoginRequiredMixin, CreateView):
     template_name = 'projects/project_create.html'
     model = Project
-    fields = ['project_name', 'project_description', 'start_project', 'end_project']
+    fields = ['project_name', 'project_description', 'start_project', 'end_project', 'users']
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.users = self.request.user
+        self.object.save()
+        form.save_m2m()
+        return redirect(self.get_success_url())
 
     def get_success_url(self):
         return reverse('todo:project_view', kwargs={'pk': self.object.pk})

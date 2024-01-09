@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.urls import reverse
 
@@ -50,6 +51,7 @@ class Task(AbstractModel):
         related_name="tasks",
         blank=True,
     )
+    users_task = models.ForeignKey(get_user_model(), null=True, related_name='tasks', on_delete=models.CASCADE, verbose_name='Пользователь')
 
     def __str__(self):
         return f"{self.id}. {self.name}"
@@ -100,6 +102,7 @@ class Project(models.Model):
     )
     start_project = models.DateField(null=True, blank=True, verbose_name="Начало проекта")
     end_project = models.DateField(null=True, blank=True, verbose_name="Завершение проекта")
+    users = models.ManyToManyField(get_user_model(), related_name='projects', verbose_name='Пользователь')
 
     def __str__(self):
         return f"{self.id}. {self.project_name}"

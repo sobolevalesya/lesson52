@@ -31,8 +31,13 @@
 {#                    </p>#}
                 <a href={{ project.get_absolute_url }} class="card-link">Подробнее...</a>
                 {% if request.user.is_authenticated %}
+                {% if perms.todo.change_project or project.users == request.user %}
                     <a href={% url 'todo:project_update_view' pk=project.pk %} class="card-link">Редактировать</a>
+                {% endif %}
+                {% if perms.todo.delete_project or project.users == request.user %}
                     <a href={% url 'todo:project_delete_view' pk=project.pk %} class="card-link">Удалить</a>
+                {% endif %}
+
                 {% endif %}
 
             </div>

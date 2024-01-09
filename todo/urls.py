@@ -1,5 +1,6 @@
 from django.urls import path
 from django.views.generic import RedirectView
+from todo.views.users_views import delete_user
 from todo.views.projects_views import IndexView, ProjectView, ProjectUpdateView, ProjectDeleteView, ProjectCreateView
 from todo.views.tasks_views import (
     TaskCreateView,
@@ -21,4 +22,5 @@ urlpatterns = [
     path("project/<int:pk>/update/", ProjectUpdateView.as_view(), name="project_update_view"),
     path("project/<int:pk>/delete/", ProjectDeleteView.as_view(), name="project_delete_view"),
     path("project/add/", ProjectCreateView.as_view(), name="project_add"),
+    path("project/<int:project_id>/users/<int:user_id>", delete_user, name="project_users_delete")
 ]
